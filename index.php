@@ -1,7 +1,7 @@
 <HTML>
 	<head>
 		<title>BanUAA</title>
-		<style type="text/css" src="css.css"></style>
+		<link rel="stylesheet" type="text/css" href="css.css">
 		<?php require 'conexion.php'; ?>
 	</head>
 	<body>
