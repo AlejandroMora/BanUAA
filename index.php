@@ -4,8 +4,33 @@
         <title>Formulario</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="css.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <?php header('Content-Type: text/html; charset=ISO-8859-1'); ?>
 		<?php /*require 'conexion.php'; */?>
+		<script>
+            $(document).ready(function(){
+                $('table tr').click(function(){
+                    window.location = $(this).attr('href');
+                });
+            });
+
+            $(document).ready(function(){
+            	  $('#f2').click(function(){
+            	    $('#login').slideUp();
+            	    $('#signup').slideDown();
+            	    $(this).addClass('clicked');
+            	    $("#f1").removeClass('clicked');
+            	    $(this).preventDefault();
+            	  });
+            	  $('#f1').click(function(){
+            	    $('#signup').slideUp();
+            	    $('#login').slideDown();
+            	    $(this).addClass('clicked');
+            	    $("#f2").removeClass('clicked');
+            	    $(this).preventDefault();
+            	  });
+            	});
+        </script>
     </head>
     <body>
     <!--------------------------------------ASIDE------------------------------------------>
@@ -29,8 +54,8 @@
     		</div>
   		</div>
     <!--------------------------------------HEADER------------------------------------------>
-		<nav align="right">
-            <input style="font-size: 15px;" type="search" id="search" placeholder="Search..." />Welcome <b></b>
+		<nav align="right" style="text-align: right;">
+            <input style="font-size: 15px; border-radius: 4px;" type="search" id="search" placeholder="Search..." /> Welcome <b>Me</b>
   		</nav>
     <!--------------------------------------CONTENT------------------------------------------>
 		<div class="contenu">
@@ -43,66 +68,116 @@
 						$data = file_get_contents($url);
 						preg_match("/<span class=bld>(.*)<\/span>/",$data, $converted);
 						$converted = preg_replace("/[^0-9.]/", "", $converted[1]);
-						return round($converted, 3);
+						return round($converted, 4);
 					}
 					?>
-					<p>Today<br>
-					<br>1 USD =<b><?php echo eX(1, "USD", "MXN"); ?> MXN</b>
-					<br>1 USD =<b><?php echo eX(1, "USD", "EUR"); ?> EUR</b></p>
+					<p>Today<b>
+					<?php echo date('l jS \of F Y');
+						  $USD_MXN = eX(1, "USD", "MXN");
+						  $USD_EUR = eX(1, "USD", "EUR");
+					?></b><br>
+					<div style="display: inline-block; ;">
+						<div class="block">
+							<b>Selling</b><br>
+							<br>1 USD =<b><?php echo $USD_MXN; ?> MXN</b>
+							<br>1 USD =<b><?php echo $USD_EUR; ?> EUR</b></p>
+						</div>
+						<div class="block">
+							<b>Buying</b><br>
+							<br>1 USD =<b><?php echo round(2*$USD_MXN-eX(1, "MXN", "USD")*$USD_MXN*$USD_MXN, 4); ?> MXN</b>
+							<br>1 USD =<b><?php echo round((2*$USD_EUR-eX(1, "EUR", "USD")*$USD_EUR*$USD_EUR), 4); ?> EUR	</b></p>
+						</div>
+					</div>
+					<div class="loginbox">
+						<a href="#" id="f1" class="click clicked">Login</a>
+						<a href="#" id="f2" class="click">Sign Up</a>
+						<div class="formbox">
+							<div id="login">
+								<form action="" method="">
+									Username :<br> <input type="text" name="username" placeholder="username" />
+									Password :<br> <input type="password" name="password" placeholder="password" />
+									<br><br><input type="submit" name="login" value="Login !!" />
+								</form>
+							</div>
+							<form id="signup" action="" method="">
+								Username :<br> <input type="text" name="username" placeholder="username" />
+								Password :<br> <input type="password" name="password" placeholder="password" />
+								Email :<br> <input type="email" name="email" placeholder="email" />
+								<br><br><input type="submit" name="signup" value="Sign up !!" />
+							</form>
+						</div>
+					</div>
   				</div>
   				<div id="money">
   					<h3>MY MONEY</h3>
   					<p>Your money is...</p>
   				</div>
   				<div id="trans">
-  					<h3>YOUR LAST TRANSFERENCES</h3>
-  					<p>This is a table...</p>
-  				</div>
+  					<h3>MY LAST TRASNFERENCES</h3>
+  					<table>
+						<thead><tr>
+								<th>Date</th>
+						        <th>Title</th>
+						        <th>Details</th>
+								<th>Amount</th>
+						</tr></thead>
+						<tbody>
+							<?php /*$query=mysqli_query($conn, "SELECT `date`, `title`, `details`, `amount` FROM `{$_POST['user']}` WHERE NOT date=''");
+                    			while($row = mysqli_fetch_assoc($query)) { //ULTIMOS 10 
+                    				echo "<tr href='?date={$row['date']}#visualizar'>
+                    					<td>{$row['date']}</td>
+                    					<td>{$row['title']}</td>
+                    					<td>{$row['details']}</td>
+                    					<td>{$row['amount']}</td>
+                    				</tr>";
+                    			}*/
+							?>
+						</tbody>
+					</table>
+				</div>
   				<div id="hist">
+					<link rel="stylesheet" href="http://factmint.io/stacked-area.css">
+					<script async src="http://factmint.io/stacked-area.js"></script>
   					<h3>HISTORY</h3>
   					<div style="width: 80%;">
-  					<table class="fm-stacked-area" data-fm-y-label="Amount" data-fm-date-format="DD/MM/YYYY" data-fm-value-prefix="$">
+  					<table class="fm-stacked-area" data-fm-y-label="Amount" data-fm-date-format="YYYY-MM-DD" data-fm-value-prefix="$">
 						<thead>
 							<tr>
 								<th>Date</th>
-								<th>Up</th>
-						        <th>Down</th>
+								<th>Collection</th>
+						        <th>Payments</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-						        <td>01/01/2014</td>
-						        <td>1500</td>
-						        <td>6500</td>
-							</tr>
-							<tr>
-        						<td>01/01/2014</td>
-        						<td>2700</td>
-        						<td>-1100</td>
-      						</tr>
+							<?php /*$query=mysqli_query($conn, "SELECT `date`, `amount` FROM `{$_POST['user']}` WHERE NOT date=''");
+                    			while($row = mysqli_fetch_assoc($query)) { //ULTIMOS 10 
+                    				echo "<tr href='?date={$row['date']}#visualizar'>
+                    					<td>{$row['date']}</td>
+                    					<td>{$row['amount']}</td>
+                    				</tr>";
+                    			}*/
+							?>
     					</tbody>
   					</table>
   					</div>
   				</div>
-					<link rel="stylesheet" href="http://factmint.io/stacked-area.css">
-					<script async src="http://factmint.io/stacked-area.js"></script>
   				<div id="conf">
   					<h3>CONFIGURATION</h3>
-  					<form action="">
+  					<form method="POST">
 						<h3>Personal data</h3>
-  						<input type="text" style="width: 34%" name="names" placeholder="Name (s)">
-						<input type="text" style="width: 34%" name="lnames" placeholder="Last names">
-						<input type="text" style="width: 19%"name="birth" placeholder="Date" onfocus="(this.type='date')" onblur="(this.type='text')"><br>
-						<input type="email" style="width: 33%" name="email" placeholder="E-mail">
-						<input type="tel" style="width: 27%" name="tel" placeholder="Phone">
-						<input type="tel" style="width: 27%" name="cel" placeholder="Celphone"><br>
-						<input type="text" style="width: 95%" name="address" placeholder="Address"><br>
-						<input type="text" style="width: 47%" name="school" placeholder="School">
-						<input type="text" style="width: 45%" name="area" placeholder="Area"><br><br>
+  						<input type="text" style="width: 32%" name="names" placeholder="Name (s)">
+						<input type="text" style="width: 32%" name="lnames" placeholder="Last names">
+						<input type="text" style="width: 18%"name="birth" placeholder="Date" onfocus="(this.type='date')" onblur="(this.type='text')"><br>
+						<input type="email" style="width: 32%" name="email" placeholder="E-mail">
+						<input type="tel" style="width: 25%" name="tel" placeholder="Phone">
+						<input type="tel" style="width: 25%" name="cel" placeholder="Celphone"><br>
+						<input type="text" style="width: 89.6%" name="address" placeholder="Address"><br>
+						<input type="text" style="width: 43%" name="school" placeholder="School">
+						<input type="text" style="width: 43%" name="area" placeholder="Area"><br><br>
 						<h3>Account settings</h3>
-  						<input type="text" style="width: 30%" name="user" placeholder="User">
-						<input type="password" style="width: 28%" name="pass" placeholder="Password">
-						<input type="password" style="width: 28%" name="npass" placeholder="New password"><br><br>
+  						<input type="text" style="width: 29%" name="user" placeholder="User">
+						<input type="password" style="width: 26.5%" name="pass" placeholder="Password">
+						<input type="password" style="width: 26.5%" name="npass" placeholder="New password"><br><br>
 						<input type="submit" style="width: 18%; float: right;" name="send" value="Update">
 					</form>
   				</div>
