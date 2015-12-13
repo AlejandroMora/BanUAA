@@ -2,13 +2,10 @@
 <html>
     <head>
         <title>Formulario</title>
-        <meta charset="UTF-8">
         <link rel="stylesheet" href="css.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <?php header('Content-Type: text/html; charset=ISO-8859-1');
-        	/*require 'conexion.php';*/
-        	session_start();
-        	//$_SESSION["user"]=$_POST["user"];
+        <?php 
+        	require 'conexion.php';
         ?>
 		<script>
             $(document).ready(function(){
@@ -41,7 +38,7 @@
 		<nav align="right" style="text-align: right;">
 			<img id="search" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB00lEQVQ4T5VTQW6jQBDswvZqjzzBx0jZJDyBJ/AEDra0R/AL/ILA3iLZK/GD+Ak8AcWJtEeeQG5RbOitnhgHW1ak9GkYuouqrgIyqNmvLBRPQoj6quJDJFDgce/Jn6JKm2Fvf2bPR81v73MV1BysPREDqBUEgUxFNUSH5eolrc5BHMDsNluCA3Z2Qyp3KhyElLx6JaOpMdqPkJwzgdGGp5F22Ag0FqAev0vx9lOaSSuRika8q8hiSjbN6mmRDFnAqHeK0lFlrZ/SfNgQB5k/brWA8AOi8Wq7CC8D8OV6u4guLcokHu87KdfPqUlzhdnNvaGXpB+c0+ubCGC0/cNzM2TpJEiLQj1NyCC+xKCX6UFDk/t3m1LOJ4MNV5/T/+CrHdDiwgBG78gf/qXOMSdhfpPFB+sYFE0YnA2Dk5tdtsBJqxtVLF0P9zTeITkBMBRbEn2u6H/jLFXLAPjMM1BIJ9UhVAHtDIahOibRFuUCI2gMzKWR1hIkZKhqy4eFzYCMKVpElswjgDH5fZVN9z/ErPTtSxwqKaeY7MjI07wT5MxLQEbMjeajHaITgEsO9Hfz6ywwp1wqrSjr48f7RhmIjBh3RdWJNJ5J+ca8a3XR7iTpF/wffLL5YpgtBXIAAAAASUVORK5CYII="/>
             <input type="search" placeholder="Search..." />
-			Welcome <b>CUSTOMER</b>
+			Welcome <b><?php echo $_SESSION["user"]; ?></b>
   		</nav>
     <!--------------------------------------CONTENT------------------------------------------>
 		<div class="cont" id="cont">
@@ -49,115 +46,10 @@
   					<h3>HOME</h3>
 					              Today:<b><?php echo date('l jS \of F Y');?></b>
 					<div>
-						<div class="block" style="width: 28%; float: left;">
-							<b>Selling</b><br><br>
-							<!-- CURRENCY SCRIPT -->
-							<script type="text/javascript">
-							$(document).ready(function () {
-								$('#btnConvert').click(function () {
-								    var from = $('#from').val();
-								    var to = $('#to').val();
-								    var amount = $('#amount').val();
-								    
-								    $.ajax({
-										url: 'https://currency-api.appspot.com/api/'+from+'/'+to+'.jsonp',
-										dataType: "jsonp",
-										success: function(resp) {
-											$('#result').html((resp.rate*amount).toFixed(4) + " " + resp.target);
-										}
-									});
-								});
-							});
-							</script>
-							Enter Amount: <input id="amount" maxlength="10" size="15" value="1" style="width: 100%"/><br>
-							From:
-							<select id="from"  style="width: 100%">
-								<option value="ARS">Argentina Peso</option>
-								<option value="AUD">Australia Dollar</option>
-								<option value="BTC">Bitcoin</option>
-								<option value="BRL">Brazil Real</option>
-								<option value="CAD">Canada Dollar</option>
-								<option value="CLP">Chile Peso</option>
-								<option value="CNY">China Yuan</option>
-								<option value="CZK">Czech R. Koruna</option>
-								<option value="DKK">Denmark Krone</option>
-								<option value="EUR">Euro Member</option>
-								<option value="FJD">Fiji Dollar</option>
-								<option value="HNL">Honduras Lempira</option>
-								<option value="HKD">Hong Kong Dollar</option>
-								<option value="HUF">Hungary Forint</option>
-								<option value="ISK">Iceland Krona</option>
-								<option value="INR">India Rupee</option>
-								<option value="IDR">Indonesia Rupiah</option>
-								<option value="ILS">Israel Shekel</option>
-								<option value="KRW">Korea (South) Won</option>
-								<option value="MYR">Malaysia Ringgit</option>
-								<option value="MXN">Mexico Peso</option>
-								<option value="NZD">N. Zealand Dollar</option>
-								<option value="NOK">Norway Krone</option>
-								<option value="PKR">Pakistan Rupee</option>
-								<option value="PHP">Philippines Peso</option>
-								<option value="PLN">Poland Zloty</option>
-								<option value="RUB">Russia Ruble</option>
-								<option value="SGD">Singapore Dollar</option>
-								<option value="ZAR">S. Africa Rand</option>
-								<option value="SEK">Sweden Krona</option>
-								<option value="CHF">Switz. Franc</option>
-								<option value="TWD">Taiwan Dollar</option>
-								<option value="THB">Thailand Baht</option>
-								<option value="TRY">Turkey Lira</option>
-								<option value="GBP">UK Pound</option>
-								<option value="USD" selected>USA Dollar</option>
-								<option value="VND">Viet Nam Dong</option>
-							</select>
-								<br>
-								To:      <select id="to" style="width: 100%">
-									<option value="ARS">Argentina Peso</option>
-									<option value="AUD">Australia Dollar</option>
-									<option value="BTC">Bitcoin</option>
-									<option value="BRL">Brazil Real</option>
-									<option value="CAD">Canada Dollar</option>
-									<option value="CLP">Chile Peso</option>
-									<option value="CNY">China Yuan Renminbi</option>
-									<option value="CZK">Czech Republic Koruna</option>
-									<option value="DKK">Denmark Krone</option>
-									<option value="EUR">Euro Member Countries</option>
-									<option value="FJD">Fiji Dollar</option>
-									<option value="HNL">Honduras Lempira</option>
-									<option value="HKD">Hong Kong Dollar</option>
-									<option value="HUF">Hungary Forint</option>
-									<option value="ISK">Iceland Krona</option>
-									<option value="INR">India Rupee</option>
-									<option value="IDR">Indonesia Rupiah</option>
-									<option value="ILS">Israel Shekel</option>
-									<option value="KRW">Korea (South) Won</option>
-									<option value="MYR">Malaysia Ringgit</option>
-									<option value="MXN" selected>Mexico Peso</option>
-									<option value="NZD">New Zealand Dollar</option>
-									<option value="NOK">Norway Krone</option>
-									<option value="PKR">Pakistan Rupee</option>
-									<option value="PHP">Philippines Peso</option>
-									<option value="PLN">Poland Zloty</option>
-									<option value="RUB">Russia Ruble</option>
-									<option value="SGD">Singapore Dollar</option>
-									<option value="ZAR">South Africa Rand</option>
-									<option value="SEK">Sweden Krona</option>
-									<option value="CHF">Switzerland Franc</option>
-									<option value="TWD">Taiwan New Dollar</option>
-									<option value="THB">Thailand Baht</option>
-									<option value="TRY">Turkey Lira</option>
-									<option value="GBP">United Kingdom Pound</option>
-									<option value="USD">United States Dollar</option>
-									<option value="VND">Viet Nam Dong</option>
-								</select><br><br>
-								<div>
-									<input id="btnConvert" type="button" value="Convert" style="padding:5px; 10px; display: inline-block;"/>
-									<div id="result" style="padding: 2px; margin: 5px; font-size:20pt; display: inline-block;"></div>
-								</div>
-						</div>
+						<?php currency(); ?>
 						<div class="block" style="width: 59%; float: right;">
 							<b>Loan request</b><br><br>
-							<input type="number" placeholder="Amount"><br><br>
+							<input type="number" placeholder="Amount" min="0" step="any" ><br><br>
 							<input type="button" value="Request">
 						</div>
 						<div class="block" style="width: 94%; float: left;">
@@ -216,34 +108,6 @@
   				</div>
 		</div>
     <!--------------------------------------FOOTER------------------------------------------>
-		<footer>
-			<div class="">
-	        	<label>Explore</label><br><br>
-	            <ul>
-	            	<li><a href="">About Us</a></li>
-	            	<li><a href="">Institute</a></li>
-	            	<li><a href="">Site Map</a></li>
-	            </ul>
-			</div>
-			<div class="">
-	        	<label>Rel. Sites</label><br><br>
-	            <ul>
-	            	<li><a href="">Chase</a></li>
-	            </ul>
-			</div>
-			<div class="">
-	        	<label>Terms & Priv.</label><br><br>
-	            <ul>
-	            	<li><a href="">Privacy & Security</a></li>
-	            </ul>
-			</div>
-			<div class="">
-	        	<label>Contact Us</label><br><br>
-	            <ul>
-	            	<li><a href="">Privacy & Security</a></li>
-	            	<li><a href="">Terms & Conditions</a></li>
-	            </ul>
-			</div>
-		</footer>
+    <?php footer(); ?>
     </body>
 </html>

@@ -2,24 +2,22 @@
 <html>
     <head>
         <title>Inicio</title>
-        <meta charset="UTF-8">
         <link rel="stylesheet" href="css.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <?php header('Content-Type: text/html; charset=ISO-8859-1');
-        	/*require 'conexion.php'*/; 
-			/*if(isset($_POST["user"]) && isset($_POST["pass"])){
-				if(mysqli_num_rows(mysqli_query($link, "SELECT `user` FROM `users` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))>0){
-					
-				}
-			}*/
-			?>		
-		<script>
-            $(document).ready(function(){
-            	  $('login').click(function(){
-                	  alert("Hola mundo");
-            	  });
-            	});
-        </script>
+        <?php 
+        	require 'conexion.php';
+			if(isset($_POST["user"]) && isset($_POST["pass"])){
+				if($row = mysqli_fetch_assoc(mysqli_query($link, "SELECT `user`, `type` FROM `users` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))){
+					$_SESSION["user"] = $row["user"];
+					header("Location: ./{$row['type']}.php");}
+				elseif ($_POST["user"] != "" && $_POST["pass"] == "") {
+					echo '<script language="javascript">alert("Login incorrect");</script>';}
+			}
+			if (isset($_GET["logout"])){
+				session_unset();
+				header("Location: ./index.php");
+			}
+		?>
     </head>
     <body>
   <!--------------------------------------HEADER------------------------------------------>
@@ -31,15 +29,22 @@
 		<div class="cont" id="cont">
 			<div>
 	  			<div class="block" style="float: left; width: 22%;">
-					<h2 style="color: white;">Login</h2>
-					<form method="POST">
-						<input type="text" name="user" placeholder="Username"/>
-						<br><input type="password" name="pass" placeholder="Password"/><br>
-						<br><input type="submit" name="login" value="Login" style="padding: 3%;"/>
-					</form>
+	  				<?php if(isset($_SESSION["user"])){ ?>
+        				<h2 style='color: white;'>Hi <?php echo $_SESSION['user']; ?> !!</h2>
+						<form method='GET'>
+        					<input type='button' onclick='location.href="./<?php echo $row['type']; ?>.php"' value='Go site' style='padding: 3%;'/>
+        					<input type='submit' name='logout' value='Logout' style='padding: 3%;'/>
+						</form>
+					<?php } else {?>				
+						<h2 style="color: white;">Login</h2>
+						<form method="POST">
+							<input type="text" name="user" placeholder="Username"/>
+							<br><input type="password" name="pass" placeholder="Password"/><br>
+							<br><input type="submit" name="login" value="Login" style="padding: 3%;"/>
+						</form>
+        			<?php } ?>
 				</div>
-				<div class="block" style="float: right; width: 63%; height: 80%;">
-					<div id="slideshow">
+					<div id="slideshow" class="slide" style="float: right; width: 66%; height: 80%; padding: 0;">
 						<div>
 							<img src="http://paymentsafrika.com/live/wp-content/uploads/2015/11/Fotolia_47599510_Subscription_Monthly_M1.jpg">
 						</div>
@@ -56,41 +61,12 @@
 							$('#slideshow > div:first').fadeOut(1000).next().fadeIn(1000).end().appendTo('#slideshow');
 						},  4000);
 					</script>
-				</div>
 				<div class="block" style="float: left; width: 22%;">
 					<h1>Other info</h1>
 				</div>
   			</div>
   		</div>
     <!--------------------------------------FOOTER------------------------------------------>
-		<footer>
-			<div class="">
-	        	<label>Explore</label>
-	            <ul>
-	            	<li><a href="">About Us</a></li>
-	            	<li><a href="">Institute</a></li>
-	            	<li><a href="">Site Map</a></li>
-	            </ul>
-			</div>
-			<div class="">
-	        	<label>Rel. Sites</label>
-	            <ul>
-	            	<li><a href="">Chase</a></li>
-	            </ul>
-			</div>
-			<div class="">
-	        	<label>Terms & Priv.</label>
-	            <ul>
-	            	<li><a href="">Privacy & Security</a></li>
-	            </ul>
-			</div>
-			<div class="">
-	        	<label>Contact Us</label>
-	            <ul>
-	            	<li><a href="">Privacy & Security</a></li>
-	            	<li><a href="">Terms & Conditions</a></li>
-	            </ul>
-			</div>
-		</footer>
+		<?php footer(); ?>
     </body>
 </html>
