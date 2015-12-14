@@ -7,6 +7,7 @@
         <?php 
         	require 'conexion.php';
         ?>
+        <!-- SCRIPT PARA VISUALIZAR EL CONTENIDO DE UNA FILA DE UNA TABLA -->
 		<script>
             $(document).ready(function(){
                 $('table tbody tr').click(function(){
@@ -46,7 +47,9 @@
   					<h3>HOME</h3>
 					              Today:<b><?php echo date('l jS \of F Y');?></b>
 					<div>
+						<!-- BLOQUE DE CAMBIO DE MONEDA, COMO ES MUY LARGO Y SE REPITE LO PUSE EN UNA FUNCION -->
 						<?php currency(); ?>
+						<!-- SOLICITAR PRESTAMO -->
 						<div class="block" style="width: 59%; float: right;">
 							<b>Loan request</b><br><br>
 							<input type="number" placeholder="Amount" min="0" step="any" ><br><br>
@@ -57,6 +60,7 @@
 						</div>
 					</div>
   				</div>
+  				<!-- VISUALIZARA LOS CAMBIOS EN SU CUENTA -->
   				<div id="trans">
   					<h3>MY LAST TRASNFERENCES</h3>
   					<table>
@@ -80,6 +84,7 @@
 						</tbody>
 					</table>
 				</div>
+				<!-- DESPLEGARÁ UNA GRAFICA DE LOS CAMBIOS EN LA CUENTA -->
   				<div id="hist">
 					<link rel="stylesheet" href="http://factmint.io/stacked-area.css">
 					<script async src="http://factmint.io/stacked-area.js"></script>

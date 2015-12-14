@@ -27,6 +27,15 @@ body {
 			width: 6%;}
 		input[type="search"]:FOCUS, input[type="search"]:HOVER, #search:HOVER + input {
 			width: 16%;}
+		#radio input[type="radio"] {
+			display:none;}
+		#radio label{
+			display:inline-block;
+			background-color:#ddd;
+			padding:1% 11px;}
+		#radio input[type="radio"]:checked + label { 
+			background-color:#652e8f;
+			color: white;}
 	li {
 		font-size: 100%;
 		line-height: 2.5em;
@@ -117,6 +126,14 @@ body {
 			#cont.cont > * > table thead tr {
 				background-color: #652e8f;
 				color: white; }
+	#aboutus > * {
+		margin: 1%;}
+	#aboutus h2{
+		 color: #652e8f;}
+	#aboutus h3{
+		 color: #8357a5;}
+	#aboutus h4{
+		 color: black;}
 	#notice {
 		width: 71.2%; }
 	#aside {

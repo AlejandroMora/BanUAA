@@ -6,8 +6,27 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <?php 
         	require 'conexion.php';
-        	$row = mysqli_fetch_assoc(mysqli_query($link, "SELECT `amount` FROM `users` WHERE user='{$_SESSION['user']}'"));
+        	//SI ALGUIEN INTENTA ACCEDER A LA PAGINA employee.php Y NO ESTÁ LOGGEADO, LO REDIRECCIONARÁ A LA PAG PRINCIPAL
+        	if(!isset($_SESSION["user"])){
+				header("Location: ./index.php");}
+			//$ROW PARA FINES PRACTICOS
+        	$row = mysqli_fetch_assoc(mysqli_query($link, "SELECT * FROM `users` WHERE user='{$_SESSION['user']}'"));
+        	//FUNCION PARA DEPOSITAR Y OTORGAR PRESTAMOS
+        	if(isset($_POST["deposit"]) || isset($_POST["loan"])){
+        		$date = date("Y-m-d H:i:s");
+        		if($row["amount"] > $_POST["amount"]){
+        			mysqli_query($link, "UPDATE `USERS` SET amount=amount-{$_POST['amount']} WHERE user='{$_SESSION['user']}'");
+        		}
+        		mysqli_query($link, "UPDATE `USERS` SET amount=amount+{$_POST['amount']} WHERE account='{$_POST['account']}'");
+        		mysqli_query($link, "INSERT INTO `{$_POST['account']}` (date, description, amount) VALUES ($date, 'Deposito efectuado', {$_POST['account']})");
+        	}
+        	//PARA REGISTRAR NUEVOS USUARIOS (CLIENTE/EMPLEADO)		AQUI ES DONDE ESTOY TENIENDO PROBLEMAS
+        	if(isset($_POST["signup"])){
+        		$birth = $_POST["birth"];
+        		mysqli_query($link, "INSERT INTO `USERS` (account, user, pass, names, lnames, birth, email, tel, cel, address, school, area, type) VALUES ((@acc := ifnull(@acc, 0) + 1), '{$_POST['user']}', '{$_POST['pass']}', '{$_POST['names']}', '{$_POST['lnames']}', $birth, '{$_POST['email']}', '{$_POST['tel']}', '{$_POST['cel']}', '{$_POST['address']}', '{$_POST['school']}', '{$_POST['area']}', '{$_POST['type']}')");
+        		mysqli_query($link, "CREATE TABLE @acc (date DATETIME, description VARCHAR(60), amount DECIMAL(16,2))");}
         ?>
+        <!-- SCRIPT PARA VISUALIZAR EL CONTENIDO DE UNA FILA DE UNA TABLA -->
 		<script>
             $(document).ready(function(){
                 $('table tbody tr').click(function(){
@@ -48,48 +67,62 @@
   					<h3>HOME</h3>
 					              Today:<b><?php echo date('l jS \of F Y');?></b>
 					<div>
+						<!-- BLOQUE DE CAMBIO DE MONEDA, COMO ES MUY LARGO Y SE REPITE LO PUSE EN UNA FUNCION -->
 						<?php currency(); ?>
+						<!-- GENERAR PRESTAMO -->
 						<div class="block" style="width: 26%; float: right;">
 							<b>Loan</b><br><br>
-							<input type="number" placeholder="Number of account"><br>
-							<input type="number" placeholder="Amount"><br><br>
-							<input type="button" value="Loan">
+							<form method="POST" action=".#home">
+								<input type="number" name="account" placeholder="Number of account"><br>
+								<input type="number" name="amount" placeholder="Amount"><br><br>
+								<input type="button" name="loan" value="Loan">
+							</form>
 						</div>
+						<!-- GENERAR DEPOSITO -->
 						<div class="block" style="width: 26%; float: right;">
 							<b>Deposit</b><br><br>
-							<input type="number" placeholder="Number of account"><br>
-							<input type="number" placeholder="Amount"><br><br>
-							<input type="button" value="Deposit">
+							<form method="POST" action=".#home">
+								<input type="number" name="account" placeholder="Number of account"><br>
+								<input type="number" name="amount" placeholder="Amount"><br><br>
+								<input type="button" name="deposit" value="Deposit">
+							</form>
 						</div>
 						<div class="block" style="width: 94%; float: left;">
-							Your money is $<b><?php echo $row["amount"];?></b><br>
+							Your number of account is <b><?php echo str_pad($row["account"], 6, "0", STR_PAD_LEFT);?></b> and you have $<b><?php echo $row["amount"];?> USD</b><br>
 						</div>
 					</div>
   				</div>
+  				<!-- REGISTRAR USUARIOS -->
   				<div id="signup">
   					<h3>SIGN-UP</h3>
   					<form method="POST">
 						<h3>Personal data</h3>
-  						<input type="text" style="width: 32%" name="names" placeholder="Name (s)">
-						<input type="text" style="width: 32%" name="lnames" placeholder="Last names">
-						<input type="text" style="width: 18%"name="birth" placeholder="Date" onfocus="(this.type='date')" onblur="(this.type='text')"><br>
-						<input type="email" style="width: 32%" name="email" placeholder="E-mail">
-						<input type="tel" style="width: 25%" name="tel" placeholder="Phone">
-						<input type="tel" style="width: 25%" name="cel" placeholder="Celphone"><br>
-						<input type="text" style="width: 89.6%" name="address" placeholder="Address"><br>
-						<input type="text" style="width: 43%" name="school" placeholder="School">
-						<input type="text" style="width: 43%" name="area" placeholder="Area"><br><br>
+  						<input type="text" style="width: 32%" name="names" placeholder="Name (s)" value="">
+						<input type="text" style="width: 32%" name="lnames" placeholder="Last names" value="">
+						<input type="text" style="width: 18%" name="birth" placeholder="Date" onfocus="(this.type='date')" onblur="this.type='text'; this.placeholder=this.value;"><br>
+						<input type="email" style="width: 32%" name="email" placeholder="E-mail" value="">
+						<input type="tel" style="width: 25%" name="tel" placeholder="Phone"  value="">
+						<input type="tel" style="width: 25%" name="cel" placeholder="Celphone"  value=""><br>
+						<input type="text" style="width: 89.6%" name="address" placeholder="Address" value=""><br>
+						<input type="text" style="width: 43%" name="school" placeholder="School" value="">
+						<input type="text" style="width: 43%" name="area" placeholder="Area" value=""><br><br>
 						<h3>Account settings</h3>
-  						<input type="text" style="width: 29%" name="user" placeholder="User">
-						<input type="password" style="width: 26.5%" name="pass" placeholder="Password">
-						<input type="password" style="width: 26.5%" name="npass" placeholder="New password"><br><br>
+  						<input type="text" style="width: 22%" name="user" placeholder="User" value="">
+						<input type="password" style="width: 22%" name="pass" placeholder="Password" value="">
+						<input type="password" style="width: 22%" name="npass" placeholder="New password" value="">
+						<div id="radio" style="display: inline; width: 22%;">
+							<input id="customer" type="radio" name="type" value="customer" checked="checked"><label for="customer">Customer</label>
+							<input id="employee" type="radio" name="type" value="employee"><label for="employee">Employee</label>
+						</div><br><br>
 						<input type="submit" style="width: 18%; float: right;" name="signup" value="Sign-up">
 					</form>
   				</div>
+  				<!-- HIPOTECAS (PENDIENTE) -->
   				<div id="mortgages">
   					<h3>MORTGAGES</h3>
   					<p>Here is the mortgages...</p>
   				</div>
+  				<!-- VISUALIZAR A LOS CLIENTES DEL PROPIO USUARIO -->
   				<div id="clients">
   					<h3>CLIENTS</h3>
   					<table>
@@ -100,15 +133,19 @@
 								<th>Amount</th>
 						</tr></thead>
 						<tbody>
-							<?php /*$query=mysqli_query($conn, "SELECT `date`, `title`, `details`, `amount` FROM `{$_POST['user']}` WHERE NOT date=''");
-                    			while($row = mysqli_fetch_assoc($query)) { //ULTIMOS 10 
-                    				echo "<tr href='?date={$row['date']}#visualizar'>
-                    					<td>{$row['date']}</td>
-                    					<td>{$row['title']}</td>
-                    					<td>{$row['details']}</td>
+							<?php
+								if($_SESSION['user'] != "admin"){
+									$query=mysqli_query($conn, "SELECT `account`, `names`, `lnames`, `amount` FROM `USERS` WHERE employee='{$_SESSION['user']}'");}
+								else {
+									$query=mysqli_query($conn, "SELECT `account`, `names`, `lnames`, `amount` FROM `USERS`");} //WHERE type='customer'
+                    			while($row = mysqli_fetch_assoc($query)) { 
+                    				echo "<tr href='?account={$row['account']}#visualizar'>
+                    					<td>{$row['account']}</td>
+                    					<td>{$row['names']}</td>
+                    					<td>{$row['lnames']}</td>
                     					<td>{$row['amount']}</td>
                     				</tr>";
-                    			}*/
+                    			}
 							?>
 						</tbody>
 					</table>

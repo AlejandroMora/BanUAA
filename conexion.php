@@ -7,10 +7,13 @@
 	$db_name = "acsm_53f52d43e2e024d";
 	$link = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 	
-	//mysqli_query($link, "CREATE TABLE `USERS` (account INT(6), user VARCHAR(26), pass VARCHAR(16), amount DECIMAL(16,2), names VARCHAR(30), lnames VARCHAR(30), birth DATETIME, email VARCHAR(30), tel VARCHAR(10), cel VARCHAR(10), address VARCHAR(60), school VARCHAR(40), area VARCHAR(15), type VARCHAR(8))");
-	//mysqli_query($link, "INSERT INTO `USERS` (account, user, pass, amount, type) VALUES (0, 'admin', '123', 99999999999999.99, 'employee')");
-	//mysqli_query($link, "CREATE TABLE `admin` (date DATETIME, description VARCHAR(60), amount DECIMAL(16,2))");
+	//mysqli_query($link, "CREATE TABLE `USERS` (account INT(6), user VARCHAR(26), pass VARCHAR(16), amount DECIMAL(16,2), names VARCHAR(30), lnames VARCHAR(30), birth DATE, email VARCHAR(30), tel VARCHAR(10), cel VARCHAR(10), address VARCHAR(60), school VARCHAR(40), area VARCHAR(15), type VARCHAR(8), employee VARCHAR(16))");
+	//mysqli_query($link, "INSERT INTO `USERS` (account, user, pass, amount, type) VALUES ((@acc := ifnull(@acc, 0) + 1), 'admin', '123', 99999999999999.99, 'employee')");
+	//mysqli_query($link, "CREATE TABLE @acc (date DATETIME, description VARCHAR(60), amount DECIMAL(16,2))");
+	//mysqli_query($link, "UPDATE `TABLE` SET column='{$row['value']}' WHERE criterio='{$_GET['value']}'");
+	//mysqli_query($link, "DROP TABLE `USERS`");
 	//mysqli_close($link);
+
 	session_start();
 	
 	function currency(){
@@ -130,7 +133,7 @@
 				<div class="">
 		        	<label>Explore</label><br><br>
 		            <ul>
-		            	<li><a href="">About Us</a></li>
+		            	<li><a href="./index.php#aboutus">About Us</a></li>
 		            	<li><a href="">Institute</a></li>
 		            	<li><a href="">Site Map</a></li>
 		            </ul>
