@@ -11,25 +11,40 @@
 				header("Location: ./index.php");}
 			//$ROW PARA FINES PRACTICOS
         	$row = mysqli_fetch_assoc(mysqli_query($link, "SELECT * FROM `users` WHERE user='{$_SESSION['user']}'"));
-        	$date = date("Y-m-d");
+        	$date = date('Y-m-d');
         	//FUNCION PARA DEPOSITAR Y OTORGAR PRESTAMOS
         	if(isset($_POST["deposit"])){
+        		$user = mysqli_fetch_assoc(mysqli_query($link, "SELECT `amount` FROM `USERS` WHERE account={$_POST['account']}"));
         		mysqli_query($link, "UPDATE `USERS` SET amount = (amount+{$_POST['amount']}) WHERE account={$_POST['account']}");
-        		mysqli_query($link, "INSERT INTO `{$_POST['account']}` (date, description, amount) VALUES ($date, 'Deposito efectuado', {$_POST['account']})");
+        		mysqli_query($link, "INSERT INTO `{$_POST['account']}` (date, description, amount, total) VALUES ('{$date}', 'Deposit effectued', {$_POST['amount']}, {$user['amount']})");
         	}
         	if(isset($_POST["loan"]) && ($row["amount"] > $_POST["amount"])){
-        		mysqli_query($link, "UPDATE `USERS` SET amount=amount-{$_POST['amount']} WHERE user='{$_SESSION['user']}'");
+        		$user = mysqli_fetch_assoc(mysqli_query($link, "SELECT `amount` FROM `USERS` WHERE account={$_POST['account']}"));
+        		mysqli_query($link, "UPDATE `USERS` SET amount = (amount-{$_POST['amount']}) WHERE user='{$_SESSION['user']}'");
+        		mysqli_query($link, "UPDATE `USERS` SET amount = (amount+{$_POST['amount']}) WHERE account={$_POST['account']}");
+        		mysqli_query($link, "INSERT INTO `{$_POST['account']}` (date, description, amount, total) VALUES ('{$date}', 'Loan effectued', {$_POST['amount']}, {$user['amount']})");
         	}
         	//PARA REGISTRAR NUEVOS USUARIOS (CLIENTE/EMPLEADO)		AQUI ES DONDE ESTOY TENIENDO PROBLEMAS
         	if(isset($_POST["signup"])){
-        		$birth = $_POST["birth"];
-        		mysqli_query($link, "INSERT INTO `USERS` (account, user, pass, names, lnames, birth, email, tel, cel, address, school, area, type) VALUES ((@acc := ifnull(@acc, 0) + 1), '{$_POST['user']}', '{$_POST['pass']}', '{$_POST['names']}', '{$_POST['lnames']}', $birth, '{$_POST['email']}', '{$_POST['tel']}', '{$_POST['cel']}', '{$_POST['address']}', '{$_POST['school']}', '{$_POST['area']}', '{$_POST['type']}')");
-        		mysqli_query($link, "CREATE TABLE @acc (date DATETIME, description VARCHAR(60), amount DECIMAL(16,2))");}
+        		if (preg_match("/^[a-zA-Z]*$/",$_POST["user"]) && ($_POST["user"]!="" && $_POST["pass"]!="" && $_POST["pass2"]!="")){
+        			if (mysqli_num_rows(mysqli_query($link, "SELECT `user` FROM `USERS` WHERE user='{$_POST['user']}'"))==0) {
+        				mysqli_query($link, "INSERT INTO `USERS` ( user, pass, names, lnames, birth, email, tel, cel, address, school, area, type, employee) VALUES ('{$_POST['user']}', '{$_POST['pass']}', '{$_POST['names']}', '{$_POST['lnames']}', '{$_POST['birth']}', '{$_POST['email']}', '{$_POST['tel']}', '{$_POST['cel']}', '{$_POST['address']}', '{$_POST['school']}', '{$_POST['area']}', '{$_POST['type']}', '{$_SESSION['user']}')");
+        				$id = mysqli_insert_id($link);
+        				mysqli_query($link, "CREATE TABLE `{$id}` (date VARCHAR(10), description VARCHAR(60), amount DECIMAL(16,2), total DECIMAL(16,2))");
+        				echo "<script language='javascript'>alert('The account is: " . str_pad($id, 6, '0', STR_PAD_LEFT) . "');</script>";
+        			}
+        			else {
+        				echo "<script language='javascript'>alert('Signup no valid: The username already exist');</script>";
+        			}
+        		}
+        		else {
+        			echo "<script language='javascript'>alert('Signup no valid: Please checkout user/password fields (only words)');</script>";
+        		}
+			}
         ?>
-        <!-- SCRIPT PARA VISUALIZAR EL CONTENIDO DE UNA FILA DE UNA TABLA -->
 		<script>
             $(document).ready(function(){
-                $('table tbody tr').click(function(){
+                $('#table tbody tr').click(function(){
                     window.location = $(this).attr('href');
                 });
             });
@@ -74,7 +89,7 @@
 							<b>Loan</b><br><br>
 							<form method="POST">
 								<input type="number" name="account" placeholder="Number of account"><br>
-								<input type="number" name="amount" placeholder="Amount"><br><br>
+								<input type="number" name="amount" placeholder="Amount" min="0" step="any"><br><br>
 								<input type="submit" name="loan" value="Loan">
 							</form>
 						</div>
@@ -83,7 +98,7 @@
 							<b>Deposit</b><br><br>
 							<form method="POST">
 								<input type="number" name="account" placeholder="Number of account"><br>
-								<input type="number" name="amount" placeholder="Amount"><br><br>
+								<input type="number" name="amount" placeholder="Amount" min="0" step="any"><br><br>
 								<input type="submit" name="deposit" value="Deposit">
 							</form>
 						</div>
@@ -109,7 +124,7 @@
 						<h3>Account settings</h3>
   						<input type="text" style="width: 22%" name="user" placeholder="User" value="">
 						<input type="password" style="width: 22%" name="pass" placeholder="Password" value="">
-						<input type="password" style="width: 22%" name="npass" placeholder="New password" value="">
+						<input type="password" style="width: 22%" name="pass2" placeholder="Confirm password" value="">
 						<div id="radio" style="display: inline; width: 22%;">
 							<input id="customer" type="radio" name="type" value="customer" checked="checked"><label for="customer">Customer</label>
 							<input id="employee" type="radio" name="type" value="employee"><label for="employee">Employee</label>
@@ -124,8 +139,28 @@
   				</div>
   				<!-- VISUALIZAR A LOS CLIENTES DEL PROPIO USUARIO -->
   				<div id="clients">
-  					<h3>CLIENTS</h3>
-  					<table>
+					<?php if ($_SESSION['user'] == "admin") { ?>
+						<h3>EMPLOYEES</h3>
+  						<table id="table">
+							<thead height="50%"><tr>
+							    <th># Account</th>
+								<th>User</th>
+								<th>Amount</th>
+							</tr></thead>
+							<tbody><?php
+								$query=mysqli_query($link, "SELECT `account`, `user`, `amount` FROM `USERS` WHERE type='employee'"); //WHERE type='customer'
+                    			while($row = mysqli_fetch_assoc($query)) { 
+                    				echo "<tr href='?account={$row['account']}#visualizar'>
+                    						<td>{$row['account']}</td>
+                    						<td>{$row['user']}</td>
+                    						<td>{$row['amount']}</td>
+                    					</tr>";}
+							?></tbody>
+						</table>
+					<?php }	?>
+					
+  					<h3>CUSTOMERS</h3>
+  					<table id="table">
 						<thead height="50%"><tr>
 						        <th># Account</th>
 								<th>Names</th>
@@ -135,9 +170,9 @@
 						<tbody>
 							<?php
 								if($_SESSION['user'] != "admin"){
-									$query=mysqli_query($conn, "SELECT `account`, `names`, `lnames`, `amount` FROM `USERS` WHERE employee='{$_SESSION['user']}'");}
+									$query=mysqli_query($link, "SELECT `account`, `names`, `lnames`, `amount` FROM `USERS` WHERE employee='{$_SESSION['user']}'");}
 								else {
-									$query=mysqli_query($conn, "SELECT `account`, `names`, `lnames`, `amount` FROM `USERS`");} //WHERE type='customer'
+									$query=mysqli_query($link, "SELECT `account`, `names`, `lnames`, `amount` FROM `USERS` WHERE type='customer'");} //WHERE type='customer'
                     			while($row = mysqli_fetch_assoc($query)) { 
                     				echo "<tr href='?account={$row['account']}#visualizar'>
                     					<td>{$row['account']}</td>
@@ -150,6 +185,21 @@
 						</tbody>
 					</table>
 				</div>
+  				<div id="visualizar">
+  					<?php $report = mysqli_fetch_assoc(mysqli_query($link, "SELECT * FROM `users` WHERE account='{$_GET['account']}'")); ?>
+  					<h3>FINANCIAL REPORT</h3>
+					<b style="float: right;"><?php echo "Date: " . date('Y-m-d') . "<br>Time:     " . date('H:i:s'); ?>
+					<br><br>Branch office: On-line<br>
+					Tel: (449) 910-8417<br>
+					Email: services@banuaa.net
+					</b>
+					<h4>
+						<br>Acount number: <b><?php echo str_pad($report['account'], 6, "0", STR_PAD_LEFT); ?></b>
+						<br>Type: <b><?php echo $report['type']; ?></b><br>
+						<br>Name: <b><?php echo $report['names'] . " " . $report['lnames']; ?></b>
+						<br>Amount: <b><?php echo $report['amount']; ?> USD</b>
+					</h4>
+  				</div>
 		</div>
     <!--------------------------------------FOOTER------------------------------------------>
 		<?php footer(); ?>

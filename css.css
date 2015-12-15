@@ -126,6 +126,8 @@ body {
 			#cont.cont > * > table thead tr {
 				background-color: #652e8f;
 				color: white; }
+			#cont.cont > * > #table tbody tr:HOVER {
+				background-color: #8357a5; }
 	#aboutus > * {
 		margin: 1%;}
 	#aboutus h2{
