@@ -20,10 +20,10 @@
 	session_start();
 
 	//USO CON FINES DE TESTEO
-	$query =  mysqli_query($link, "SELECT * FROM `USERS`");
+	/*$query =  mysqli_query($link, "SELECT * FROM `USERS`");
 	while ($resp = mysqli_fetch_assoc($query)){
 		echo "{$resp['account']} {$resp['user']} {$resp['pass']} {$resp['amount']} {$resp['names']} {$resp['lnames']} {$resp['birth']} {$resp['email']} {$resp['tel']} {$resp['cel']} {$resp['address']} {$resp['school']} {$resp['area']} {$resp['type']} {$resp['employee']}<br>";
-	}
+	}*/
 	
 	function currency(){
 		echo '
