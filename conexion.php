@@ -7,10 +7,13 @@
 	$db_name = "acsm_53f52d43e2e024d";
 	$link = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 	
-	//mysqli_query($link, "CREATE TABLE `USERS` (account INT(6), user VARCHAR(26), pass VARCHAR(16), amount DECIMAL(16,2), names VARCHAR(30), lnames VARCHAR(30), birth DATE, email VARCHAR(30), tel VARCHAR(10), cel VARCHAR(10), address VARCHAR(60), school VARCHAR(40), area VARCHAR(15), type VARCHAR(8), employee VARCHAR(16))");
-	//mysqli_query($link, "INSERT INTO `USERS` (account, user, pass, amount, type) VALUES ((@acc := ifnull(@acc, 0) + 1), 'admin', '123', 99999999999999.99, 'employee')");
-	//mysqli_query($link, "CREATE TABLE @acc (date DATETIME, description VARCHAR(60), amount DECIMAL(16,2))");
+	//mysqli_query($link, "CREATE TABLE `USERS` (account TINYINT PRIMARY KEY AUTO_INCREMENT, user VARCHAR(26), pass VARCHAR(16), amount DECIMAL(16,2) NOT NULL DEFAULT 0.00, names VARCHAR(30), lnames VARCHAR(30), birth VARCHAR(10), email VARCHAR(30), tel VARCHAR(10), cel VARCHAR(10), address VARCHAR(60), school VARCHAR(40), area VARCHAR(15), type VARCHAR(8), employee VARCHAR(16)) AUTO_INCREMENT = 1")){
+	//mysqli_query($link, "INSERT INTO `USERS` (user, pass, amount, type) VALUES ('admin', '123', 99999999999999.99, 'employee')");
+	//mysqli_query($link, "INSERT INTO `USERS` (user, pass, names, lnames, birth, email, tel, cel, address, school, area, type, employee) VALUES ('josue', 'josue', 'Josue Ramon', 'Zavala Soto', '1995-08-22', 'josue_22__@hotmail.com', '', '4491042526', 'direccion', 'UAA', 'Sistemas', 'customer', 'uno')");
+	//$id = mysqli_insert_id($link);
+	//mysqli_query($link, "CREATE TABLE `{$id}` (date VARCHAR(10), description VARCHAR(60), amount DECIMAL(16,2))");
 	//mysqli_query($link, "UPDATE `TABLE` SET column='{$row['value']}' WHERE criterio='{$_GET['value']}'");
+	//mysqli_query($link,"DELETE FROM `USERS` WHERE account = 31");
 	//mysqli_query($link, "DROP TABLE `USERS`");
 	//mysqli_close($link);
 

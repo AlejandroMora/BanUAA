@@ -11,14 +11,14 @@
 				header("Location: ./index.php");}
 			//$ROW PARA FINES PRACTICOS
         	$row = mysqli_fetch_assoc(mysqli_query($link, "SELECT * FROM `users` WHERE user='{$_SESSION['user']}'"));
+        	$date = date("Y-m-d");
         	//FUNCION PARA DEPOSITAR Y OTORGAR PRESTAMOS
-        	if(isset($_POST["deposit"]) || isset($_POST["loan"])){
-        		$date = date("Y-m-d H:i:s");
-        		if($row["amount"] > $_POST["amount"]){
-        			mysqli_query($link, "UPDATE `USERS` SET amount=amount-{$_POST['amount']} WHERE user='{$_SESSION['user']}'");
-        		}
-        		mysqli_query($link, "UPDATE `USERS` SET amount=amount+{$_POST['amount']} WHERE account='{$_POST['account']}'");
+        	if(isset($_POST["deposit"])){
+        		mysqli_query($link, "UPDATE `USERS` SET amount = (amount+{$_POST['amount']}) WHERE account={$_POST['account']}");
         		mysqli_query($link, "INSERT INTO `{$_POST['account']}` (date, description, amount) VALUES ($date, 'Deposito efectuado', {$_POST['account']})");
+        	}
+        	if(isset($_POST["loan"]) && ($row["amount"] > $_POST["amount"])){
+        		mysqli_query($link, "UPDATE `USERS` SET amount=amount-{$_POST['amount']} WHERE user='{$_SESSION['user']}'");
         	}
         	//PARA REGISTRAR NUEVOS USUARIOS (CLIENTE/EMPLEADO)		AQUI ES DONDE ESTOY TENIENDO PROBLEMAS
         	if(isset($_POST["signup"])){
@@ -72,19 +72,19 @@
 						<!-- GENERAR PRESTAMO -->
 						<div class="block" style="width: 26%; float: right;">
 							<b>Loan</b><br><br>
-							<form method="POST" action=".#home">
+							<form method="POST">
 								<input type="number" name="account" placeholder="Number of account"><br>
 								<input type="number" name="amount" placeholder="Amount"><br><br>
-								<input type="button" name="loan" value="Loan">
+								<input type="submit" name="loan" value="Loan">
 							</form>
 						</div>
 						<!-- GENERAR DEPOSITO -->
 						<div class="block" style="width: 26%; float: right;">
 							<b>Deposit</b><br><br>
-							<form method="POST" action=".#home">
+							<form method="POST">
 								<input type="number" name="account" placeholder="Number of account"><br>
 								<input type="number" name="amount" placeholder="Amount"><br><br>
-								<input type="button" name="deposit" value="Deposit">
+								<input type="submit" name="deposit" value="Deposit">
 							</form>
 						</div>
 						<div class="block" style="width: 94%; float: left;">

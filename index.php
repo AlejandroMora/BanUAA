@@ -7,10 +7,11 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <?php 
         	require 'conexion.php';
-        	/*$query =  mysqli_query($link, "SELECT * FROM `USERS`"); //USO CON FINES DE TESTEO
+        	//USO CON FINES DE TESTEO
+        	$query =  mysqli_query($link, "SELECT * FROM `USERS`");
 		    while ($resp = mysqli_fetch_assoc($query)){
 		        echo "<br> {$resp['account']} {$resp['user']} {$resp['pass']} {$resp['amount']} {$resp['type']}";
-		    }*/
+		    }
 			if(isset($_POST["user"]) && isset($_POST["pass"])){ //LOGIN
 				if($row = mysqli_fetch_assoc(mysqli_query($link, "SELECT `user`, `type` FROM `users` WHERE user='{$_POST['user']}' AND pass='{$_POST['pass']}'"))){
 					$_SESSION["user"] = $row["user"];
